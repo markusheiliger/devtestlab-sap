@@ -47,6 +47,15 @@ if [ "${PARAM_RESET^^}" == "TRUE" ]; then
   sleep 1m
 fi
 
+PACKAGES=()
+while read TOKEN; do
+	[ -z "$TOKEN" ] || { PACKAGES+=( "$TOKEN" ); }
+done < <( echo "$PARAM_SAPPACKAGES" | tr ";" "\n" )
+
+TEMPLATE_PARAMS+=( --parameters SAPUsername="$PARAM_SAPUSERNAME" )
+TEMPLATE_PARAMS+=( --parameters SAPPassword="$PARAM_SAPPASSWORD" )
+TEMPLATE_PARAMS+=( --parameters SAPPackages="$( ( IFS=$'\n'; echo "${PACKAGES[*]}" ) | jq -R . | jq -sc . )" )
+
 echo -e "\nDeploying resources ..."
 TEMPLATE_RESULT=$( az deployment group create \
   --subscription "$PARAM_SUBSCRIPTION" \

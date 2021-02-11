@@ -2,6 +2,18 @@
   "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
+    "SAPUsername":{
+      "type": "string"
+    },
+    "SAPPassword":{
+      "type": "securestring"
+    },
+    "SAPPackages":{
+      "type": "array",
+      "defaultValue": [
+        "hostagent"
+      ]
+    }
   },
   "variables": {
     "resourcePrefix": "[concat('sap-', uniquestring(resourceGroup().id))]",
@@ -68,8 +80,8 @@
         "retentionInterval": "P1D",
         "cleanupPreference": "OnSuccess",
 
-        "arguments": "",
-        "scriptContent": "Write-Output $PSVersionTable",
+        "arguments": "[concat('-Username ', parameters('SAPUsername'), ' -Password ', parameters('SAPPassword'), ' -Packages ', replace(replace(string(parameters('SAPPackages')), '[', ''), ']', ''))]",
+        "primaryScriptUri": "https://raw.githubusercontent.com/markusheiliger/devtestlab-sap/main/environments/sap-sandbox/scripts/downloader.ps1",
         
         "storageAccountSettings": {
           "storageAccountName": "[variables('storageName')]",
