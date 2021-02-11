@@ -15,6 +15,7 @@ param (
 
 $Packages | ForEach-Object {
 
+	Write-Host $_
 	$DownloadRoot = Join-Path $PSScriptRoot "downloads/$_"
 
 	if ($Refresh) {
