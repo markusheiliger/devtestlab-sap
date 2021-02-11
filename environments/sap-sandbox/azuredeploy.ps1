@@ -1,0 +1,71 @@
+
+
+param (
+
+	[Parameter(Mandatory=$true, ValueFromPipeline=$false)]
+	[string] $Username,
+
+	[Parameter(Mandatory=$true, ValueFromPipeline=$false)]
+	[string] $Password,
+
+	[Parameter(Mandatory=$true, ValueFromPipeline=$false)]
+	[string] $Package,
+
+	[Parameter(Mandatory=$false, ValueFromPipeline=$false)]
+	[switch] $Refresh = $false
+)
+
+$PackagePath = Join-Path $PSScriptRoot "packages/$Package.lst"
+
+if ( -not (Test-Path $PackagePath -PathType Leaf)) {
+	# the package file does not exist in the packages folder 
+	throw "Could not find package '$PackagePath'" 
+}
+
+$DownloadRoot = Join-Path $PSScriptRoot "downloads/$Package"
+
+if ($Refresh) {
+	# delete package download location to enforce download
+	Remove-Item -Confirm:$false -Recurse -Force -Path $DownloadRoot | Out-Null
+}
+
+if ( -not (Test-Path $DownloadRoot -PathType Container)) {
+	# create download folder for the selected package
+	New-Item -ItemType Directory -Force -Path $DownloadRoot | Out-Null
+}
+
+
+$Packages = Get-Content -Path $PackagePath | `
+	Where-Object { [system.uri]::IsWellFormedUriString($_,[System.UriKind]::Absolute) } | `
+	Select-Object @{label="ID";expression={ $_.ToString().Split("/") | Select-Object -Last 1 }}, @{label="Url"; expression={ $_.ToString() }} -Unique
+
+$PasswordSec = ConvertTo-SecureString $Password -AsPlainText -Force
+$Credentials = New-Object System.Management.Automation.PSCredential($Username, $PasswordSec)
+
+$Packages | ForEach-Object {
+
+	Write-Host "Downloading package: $($_.Url)"
+
+	$Download = Invoke-WebRequest -Uri "https://origin.softwaredownloads.sap.com/tokengen/" `
+		-Credential $Credentials -UserAgent "SAP Download Manager"  -Method Get `
+		-Body @{ file = $_.Id } # -OutFile $DownloadPath
+
+	if ($Download.Headers["Content-Disposition"] -match 'filename=\"(.+)\"') {
+		
+		[string] $DownloadFile = $matches[1].ToString()
+
+		if ($Package.ToLowerInvariant() = "hostagent") {
+			# the hostagent package needs some file name cleanup to take place
+			$DownloadFile = $DownloadFile -replace "(?<=SAPCAR|SAPHOSTAGENT)(.*)(?=\.)", ""
+		}
+
+		[string] $DownloadPath = Join-Path $DownloadRoot $DownloadFile
+
+		Write-Host "==> $DownloadPath"
+		
+		[IO.File]::WriteAllBytes($DownloadPath, $Download.Content)
+
+	} else {
+		throw "Unable to identify file name in download $($p.Url)"
+	}
+}
