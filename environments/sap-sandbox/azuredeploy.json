@@ -19,11 +19,7 @@
     "resourcePrefix": "[concat('sap-', uniquestring(resourceGroup().id))]",
     "identityName": "[concat(variables('resourcePrefix'), '-id')]",
     "scriptName": "[concat(variables('resourcePrefix'), '-scr')]",
-    "storageName": "[replace(variables('resourcePrefix'), '-', '')]",
-
-    "roleDefinitionId": "[resourceId('Microsoft.Authorization/roleDefinitions', 'b24988ac-6180-42a0-ab88-20f7382dd24c')]",
-    "roleDefinitionName": "[guid(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('identityName')), variables('roleDefinitionId'), resourceGroup().id)]"
-
+    "storageName": "[replace(variables('resourcePrefix'), '-', '')]"
   },
   "resources": [
     {
@@ -44,26 +40,12 @@
       "location": "[resourceGroup().location]"
     },
     {
-      "type": "Microsoft.Authorization/roleAssignments",
-      "apiVersion": "2020-04-01-preview",
-      "name": "[variables('roleDefinitionName')]",
-      "dependsOn": [
-        "[variables('identityName')]"
-      ],
-      "properties": {
-        "roleDefinitionId": "[variables('roleDefinitionId')]",
-        "principalId": "[reference(variables('identityName')).principalId]",
-        "scope": "[resourceGroup().id]",
-        "principalType": "ServicePrincipal"
-      }
-    },
-    {
       "type": "Microsoft.Resources/deploymentScripts",
       "apiVersion": "2020-10-01",
       "name": "[variables('scriptName')]",
       "location": "[resourceGroup().location]",
       "dependsOn": [
-        "[variables('roleDefinitionName')]"
+        "[variables('storageName')]"
       ],
       "identity": {
         "type": "UserAssigned",
@@ -78,7 +60,7 @@
         
         "timeout": "PT30M",
         "retentionInterval": "P1D",
-        "cleanupPreference": "OnSuccess",
+        "cleanupPreference": "OnExpiration",
 
         "arguments": "[concat('-Username ', parameters('SAPUsername'), ' -Password ', parameters('SAPPassword'), ' -Packages ', replace(replace(string(parameters('SAPPackages')), '[', ''), ']', ''))]",
         "primaryScriptUri": "https://raw.githubusercontent.com/markusheiliger/devtestlab-sap/main/environments/sap-sandbox/scripts/downloader.ps1",

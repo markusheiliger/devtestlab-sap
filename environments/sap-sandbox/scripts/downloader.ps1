@@ -15,7 +15,7 @@ param (
 
 foreach ($Package in $Packages) {
 	try {
-		$DownloadRoot = Join-Path $PSScriptRoot "downloads/$_"
+		$DownloadRoot = Join-Path $PSScriptRoot "../downloads/$Package"
 		Write-Output "Processing package '$Package' ($DownloadRoot) ..."
 
 		if ($Refresh) {
