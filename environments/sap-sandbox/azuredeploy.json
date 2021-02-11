@@ -74,7 +74,7 @@
       "kind": "AzurePowerShell",
       "properties": {
         "forceUpdateTag": "[guid(deployment().name)]",
-        "azPowerShellVersion": "3.0",  
+        "azPowerShellVersion": "5.0",  
         
         "timeout": "PT30M",
         "retentionInterval": "P1D",
