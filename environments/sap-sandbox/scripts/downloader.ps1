@@ -15,7 +15,7 @@ param (
 
 $Packages | ForEach-Object {
 
-	Write-Host $_
+	Write-Output $_
 	$DownloadRoot = Join-Path $PSScriptRoot "downloads/$_"
 
 	if ($Refresh) {
@@ -37,7 +37,7 @@ $Packages | ForEach-Object {
 
 	$PackageFiles | ForEach-Object {
 
-		Write-Host "Downloading package: $($_.Url)"
+		Write-Output "Downloading package: $($_.Url)"
 
 		$Download = Invoke-WebRequest -Uri "https://origin.softwaredownloads.sap.com/tokengen/" `
 			-Credential $Credentials -UserAgent "SAP Download Manager"  -Method Get `
@@ -54,7 +54,7 @@ $Packages | ForEach-Object {
 
 			[string] $DownloadPath = Join-Path $DownloadRoot $DownloadFile
 
-			Write-Host "==> $DownloadPath"
+			Write-Output "==> $DownloadPath"
 		
 			[IO.File]::WriteAllBytes($DownloadPath, $Download.Content)
 
