@@ -18,6 +18,7 @@ $Packages | ForEach-Object {
 	$DownloadRoot = Join-Path $PSScriptRoot "downloads/$_"
 	Write-Output "Processing package '$_' ($DownloadRoot) ..."
 
+
 	if ($Refresh) {
 		# delete package download location to enforce download
 		Remove-Item -Confirm:$false -Recurse -Force -Path $DownloadRoot | Out-Null
@@ -31,6 +32,7 @@ $Packages | ForEach-Object {
 	$PackageFiles = (Invoke-WebRequest -Uri "https://raw.githubusercontent.com/lnwsoft/phoenix-repo-downloader/main/packages/$_.lst").Content | `
 		Where-Object { [system.uri]::IsWellFormedUriString($_, [System.UriKind]::Absolute) } | `
 		Select-Object @{label = "ID"; expression = { $_.ToString().Split("/") | Select-Object -Last 1 } }, @{label = "Url"; expression = { $_.ToString() } } -Unique
+	$PackageFiles | Format-Table
 
 	$PasswordSec = ConvertTo-SecureString $Password -AsPlainText -Force
 	$Credentials = New-Object System.Management.Automation.PSCredential($Username, $PasswordSec)
