@@ -15,7 +15,10 @@ param (
 
 foreach ($Package in $Packages) {
 	try {
+
 		$DownloadRoot = Join-Path $PSScriptRoot "../downloads/$Package"
+		$PackageList = Join-Path $DownloadRoot "package.lst" 
+		
 		Write-Output "Processing package '$Package' ($DownloadRoot) ..."
 
 		if ($Refresh) {
@@ -28,10 +31,11 @@ foreach ($Package in $Packages) {
 			New-Item -ItemType Directory -Force -Path $DownloadRoot | Out-Null
 		}
 
-		$PackageFiles = (Invoke-WebRequest -Uri "https://raw.githubusercontent.com/lnwsoft/phoenix-repo-downloader/main/packages/$Package.lst").Content -split "\r?\n|\r" | `
+		Invoke-WebRequest -Uri "https://raw.githubusercontent.com/lnwsoft/phoenix-repo-downloader/main/packages/$Package.lst" -OutFile $PackageList
+
+		$PackageFiles = Get-Content -Path $PackageList | `
 			Where-Object { [system.uri]::IsWellFormedUriString($_, [System.UriKind]::Absolute) } | `
 			Select-Object @{label = "ID"; expression = { $_.ToString().Split("/") | Select-Object -Last 1 } }, @{label = "Url"; expression = { $_.ToString() } } -Unique
-		$PackageFiles | Format-Table
 
 		$PasswordSec = ConvertTo-SecureString $Password -AsPlainText -Force
 		$Credentials = New-Object System.Management.Automation.PSCredential($Username, $PasswordSec)
@@ -59,7 +63,7 @@ foreach ($Package in $Packages) {
 				Write-Output "- Saved download '$($_.Url)' to '$DownloadPath'"
 			}
 			else {
-				throw "Unable to identify file name in download $($p.Url)"
+				throw "Unable to identify file name in download $($p.Url): $($Download.Headers['Content-Disposition'])"
 			}
 		}
 	}
