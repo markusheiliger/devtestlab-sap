@@ -13,11 +13,10 @@ param (
 	[switch] $Refresh = $false
 )
 
-$Packages | ForEach-Object {
+foreach ($Package in $Packages) {
 
 	$DownloadRoot = Join-Path $PSScriptRoot "downloads/$_"
-	Write-Output "Processing package '$_' ($DownloadRoot) ..."
-
+	Write-Output "Processing package '$Package' ($DownloadRoot) ..."
 
 	if ($Refresh) {
 		# delete package download location to enforce download
@@ -29,7 +28,7 @@ $Packages | ForEach-Object {
 		New-Item -ItemType Directory -Force -Path $DownloadRoot | Out-Null
 	}
 
-	$PackageFiles = (Invoke-WebRequest -Uri "https://raw.githubusercontent.com/lnwsoft/phoenix-repo-downloader/main/packages/$_.lst").Content | `
+	$PackageFiles = (Invoke-WebRequest -Uri "https://raw.githubusercontent.com/lnwsoft/phoenix-repo-downloader/main/packages/$PackageName.lst").Content | `
 		Where-Object { [system.uri]::IsWellFormedUriString($_, [System.UriKind]::Absolute) } | `
 		Select-Object @{label = "ID"; expression = { $_.ToString().Split("/") | Select-Object -Last 1 } }, @{label = "Url"; expression = { $_.ToString() } } -Unique
 	$PackageFiles | Format-Table
