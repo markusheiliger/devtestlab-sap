@@ -15,8 +15,8 @@ param (
 
 $Packages | ForEach-Object {
 
-	Write-Output $_
 	$DownloadRoot = Join-Path $PSScriptRoot "downloads/$_"
+	Write-Output "Processing package '$_' ($DownloadRoot) ..."
 
 	if ($Refresh) {
 		# delete package download location to enforce download
@@ -37,7 +37,7 @@ $Packages | ForEach-Object {
 
 	$PackageFiles | ForEach-Object {
 
-		Write-Output "Downloading package: $($_.Url)"
+		Write-Output "- Enqueued download '$($_.Url)'"
 
 		$Download = Invoke-WebRequest -Uri "https://origin.softwaredownloads.sap.com/tokengen/" `
 			-Credential $Credentials -UserAgent "SAP Download Manager"  -Method Get `
@@ -53,11 +53,9 @@ $Packages | ForEach-Object {
 			}
 
 			[string] $DownloadPath = Join-Path $DownloadRoot $DownloadFile
-
-			Write-Output "==> $DownloadPath"
-		
 			[IO.File]::WriteAllBytes($DownloadPath, $Download.Content)
 
+			Write-Output "- Saved download '$($_.Url)' to '$DownloadPath'"
 		}
 		else {
 			throw "Unable to identify file name in download $($p.Url)"
