@@ -45,8 +45,7 @@ foreach ($Package in $Packages) {
 			Write-Output "- Enqueued download '$($_.Url)'"
 
 			$Download = Invoke-WebRequest -Uri "https://origin.softwaredownloads.sap.com/tokengen/" `
-				-Credential $Credentials -UserAgent "SAP Download Manager"  -Method Get `
-				-Body @{ file = $_.Id } # -OutFile $DownloadPath
+				-Credential $Credentials -UserAgent "SAP Download Manager"  -Method Get -Body @{ file = $_.Id } 
 
 			if ($Download.Headers["Content-Disposition"] -match 'filename=\"(.+)\"') {
 		
