@@ -28,6 +28,8 @@ foreach ($Package in $Packages) {
 			New-Item -ItemType Directory -Force -Path $DownloadRoot | Out-Null
 		}
 
+		Write-Output (Invoke-WebRequest -Uri "https://raw.githubusercontent.com/lnwsoft/phoenix-repo-downloader/main/packages/$Package.lst").Content
+		
 		$PackageFiles = (Invoke-WebRequest -Uri "https://raw.githubusercontent.com/lnwsoft/phoenix-repo-downloader/main/packages/$Package.lst").Content | `
 			Where-Object { [system.uri]::IsWellFormedUriString($_, [System.UriKind]::Absolute) } | `
 			Select-Object @{label = "ID"; expression = { $_.ToString().Split("/") | Select-Object -Last 1 } }, @{label = "Url"; expression = { $_.ToString() } } -Unique
