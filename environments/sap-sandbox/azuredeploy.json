@@ -53,10 +53,10 @@
           "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('identityName'))]": { /*ttk bug*/ }
         }
       },
-      "kind": "AzurePowerShell",
+      "kind": "AzureCLI",
       "properties": {
         "forceUpdateTag": "[guid(deployment().name)]",
-        "azPowerShellVersion": "5.0",  
+        "azCliVersion": "2.18",  
         
         "timeout": "PT30M",
         "retentionInterval": "P1D",
