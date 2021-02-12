@@ -53,12 +53,12 @@ for PACKAGE in "${PACKAGES[@]}"; do
 		
 	done
 
-	if [ "${PACKAGE^^}" = "HOSTAGENT" ]; then
+	# if [ "${PACKAGE^^}" = "HOSTAGENT" ]; then
 
-		# mv SAPCAR*.exe SAPCAR.exe
-		# mv SAPHOSTAGENT*.SAR SAPHOSTAGENT.SAR
+	# 	# mv SAPCAR*.exe SAPCAR.exe
+	# 	# mv SAPHOSTAGENT*.SAR SAPHOSTAGENT.SAR
 
-	fi
+	# fi
 
 	popd > /dev/null
 
