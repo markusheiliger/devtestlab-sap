@@ -31,20 +31,10 @@ while read TOKEN; do
 	[ -z "$TOKEN" ] || { PACKAGES+=( "$TOKEN" ); }
 done < <( echo "$PARAM_PACKAGES" | tr ";" "\n" | tr "," "\n" )
 
-echo "Packages to process ${#PACKAGES[@]}"
+echo "${#PACKAGES[@]} Packages to process"
 
-if [ "${#PACKAGES[@]}" -gt "1"]; then
+for PACKAGE in "${PACKAGES[@]}"; do
 
-	for PACKAGE in "${PACKAGES[@]}"; do
-		echo "Enqueueing package '$PACKAGE' ..."
-		./$0 --SAPUsername "$PARAM_SAPUSERNAME" --SAPPassword "$PARAM_SAPPASSWORD" --Packages "$PACKAGE" &
-	done
-
-	wait # wait for the started jobs
-
-elif [ ! -z "${PACKAGES[0]}" ]; then
-
-	PACKAGE="${PACKAGES[0]}"
 	echo "Processing package '$PACKAGE' ..."
 
 	mkdir -p "$DOWNLOAD_ROOT/$PACKAGE" && pushd "$DOWNLOAD_ROOT/$PACKAGE" > /dev/null
@@ -72,7 +62,4 @@ elif [ ! -z "${PACKAGES[0]}" ]; then
 
 	popd > /dev/null
 
-else
-
-	echo "No package to process !!!"
-fi
+done
