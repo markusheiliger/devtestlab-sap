@@ -16,11 +16,11 @@ fail () {
     exit 1
 }
 
-[ -z "$PARAM_USERNAME" ] && { PARAM_USERNAME="$SAPUSERNAME"; } 
-[ -z "$PARAM_USERNAME" ] && fail "Missing username"
+[ -z "$PARAM_SAPUSERNAME" ] && { PARAM_SAPUSERNAME="$SAPUSERNAME"; } 
+[ -z "$PARAM_SAPUSERNAME" ] && fail "Missing username"
 
-[ -z "$PARAM_PASSWORD" ] && { PARAM_PASSWORD="$SAPPASSWORD"; } 
-[ -z "$PARAM_PASSWORD" ] && fail "Missing password"
+[ -z "$PARAM_SAPPASSWORD" ] && { PARAM_SAPPASSWORD="$SAPPASSWORD"; } 
+[ -z "$PARAM_SAPPASSWORD" ] && fail "Missing password"
 
 [ -z "$PARAM_PACKAGES" ] && fail "Missing packages"
 
@@ -43,10 +43,9 @@ for PACKAGE in "${PACKAGES[@]}"; do
 
 		echo -e "\nDownloading file $URL into $PWD ...\n"
 		
-		wget --user=$PARAM_USERNAME --password=$PARAM_PASSWORD \
+		wget --user=$PARAM_SAPUSERNAME --password=$PARAM_SAPPASSWORD \
 			 --content-disposition --trust-server-names --auth-no-challenge -q --show-progress \
-			 --user-agent="SAP Download Manager"  \
-			 $URL
+			 --user-agent="SAP Download Manager" $URL
 
 	done
 

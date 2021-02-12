@@ -2,13 +2,13 @@
   "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
-    "SAPUsername":{
+    "SAPUsername": {
       "type": "string"
     },
-    "SAPPassword":{
+    "SAPPassword": {
       "type": "securestring"
     },
-    "SAPPackages":{
+    "SAPPackages": {
       "type": "array",
       "defaultValue": [
         "hostagent"
@@ -17,9 +17,13 @@
   },
   "variables": {
     "resourcePrefix": "[concat('sap-', uniquestring(resourceGroup().id))]",
-    "identityName": "[concat(variables('resourcePrefix'), '-id')]",
     "scriptName": "[concat(variables('resourcePrefix'), '-scr')]",
-    "storageName": "[replace(variables('resourcePrefix'), '-', '')]"
+    "storageName": "[replace(variables('resourcePrefix'), '-', '')]",
+
+    "identityName": "[concat(variables('resourcePrefix'), '-id')]",
+    "identityRole": "[guid(resourceGroup().id, variables('identityName'), variables('roleDefinition_reader'))]",
+
+    "roleDefinition_reader": "[concat(subscription().id, '/providers/Microsoft.Authorization/roleDefinitions/', 'acdd72a7-3385-48ef-bd42-f606fba81ae7')]"
   },
   "resources": [
     {
@@ -40,12 +44,25 @@
       "location": "[resourceGroup().location]"
     },
     {
+      "type": "Microsoft.Authorization/roleAssignments",
+      "name": "[variables('identityRole')]",
+      "apiVersion": "2018-09-01-preview",
+      "dependsOn": [
+        "[variables('identityName')]"
+      ],
+      "properties": {
+        "roleDefinitionId": "[variables('roleDefinition_reader')]",
+        "principalId": "[reference(variables('identityName')).principalId]"
+      }
+    },
+    {
       "type": "Microsoft.Resources/deploymentScripts",
       "apiVersion": "2020-10-01",
       "name": "[variables('scriptName')]",
       "location": "[resourceGroup().location]",
       "dependsOn": [
-        "[variables('storageName')]"
+        "[variables('storageName')]",
+        "[variables('identityRole')]"
       ],
       "identity": {
         "type": "UserAssigned",
@@ -56,19 +73,30 @@
       "kind": "AzureCLI",
       "properties": {
         "forceUpdateTag": "[guid(deployment().name)]",
-        "azCliVersion": "2.18",  
-        
+        "azCliVersion": "2.9.1",
+
         "timeout": "PT30M",
         "retentionInterval": "P1D",
         "cleanupPreference": "OnExpiration",
 
-        "arguments": "[concat('-Username ', parameters('SAPUsername'), ' -Password ', parameters('SAPPassword'), ' -Packages ', replace(replace(string(parameters('SAPPackages')), '[', ''), ']', ''))]",
-        "primaryScriptUri": "https://raw.githubusercontent.com/markusheiliger/devtestlab-sap/main/environments/sap-sandbox/scripts/downloader.ps1",
-        
+        "arguments": "[concat('-Packages ', replace(replace(string(parameters('SAPPackages')), '[', ''), ']', ''))]",
+        "primaryScriptUri": "https://raw.githubusercontent.com/markusheiliger/devtestlab-sap/main/environments/sap-sandbox/scripts/downloader.sh",
+
         "storageAccountSettings": {
           "storageAccountName": "[variables('storageName')]",
           "storageAccountKey": "[listKeys(variables('storageName'),'2018-02-01').keys[0].value]"
-        }
+        },
+
+        "environmentVariables": [
+          {
+            "name": "SAPUsername",
+            "value": "[parameters('SAPUsername')]"
+          },
+          {
+            "name": "SAPPassword",
+            "secureValue": "[parameters('SAPPassword')]"
+          }
+        ]
       }
     }
   ],
