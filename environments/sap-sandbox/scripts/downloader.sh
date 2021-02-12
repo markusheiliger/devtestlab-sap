@@ -29,7 +29,7 @@ rm -rf $DOWNLOAD_ROOT > /dev/null
 
 while read TOKEN; do
 	[ -z "$TOKEN" ] || { PACKAGES+=( "$TOKEN" ); }
-done < <( echo "$PARAM_PACKAGES" | tr ";" "\n" )
+done < <( echo "$PARAM_PACKAGES" | tr "," "\n" )
 
 if [ "${#array[@]}" -gt "1"]; then
 
