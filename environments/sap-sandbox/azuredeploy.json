@@ -46,13 +46,13 @@
     {
       "type": "Microsoft.Authorization/roleAssignments",
       "name": "[variables('identityRole')]",
-      "apiVersion": "2018-09-01-preview",
+      "apiVersion": "2020-04-01-preview",
       "dependsOn": [
         "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('identityName'))]"
       ],
       "properties": {
         "roleDefinitionId": "[variables('roleDefinition_reader')]",
-        "principalId": "[reference(variables('identityName')).principalId]"
+        "principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('identityName')), '2018-11-30').principalId]"
       }
     },
     {

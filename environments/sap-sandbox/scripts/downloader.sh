@@ -49,7 +49,7 @@ for PACKAGE in "${PACKAGES[@]}"; do
 		
 		wget --user="$PARAM_SAPUSERNAME" --password="$PARAM_SAPPASSWORD" \
 			--content-disposition --trust-server-names --auth-no-challenge \
-			--user-agent="SAP Download Manager" $URL
+			--user-agent="SAP Download Manager" "$URL" | tee -a ./package.log
 		
 	done
 
