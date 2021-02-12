@@ -31,6 +31,19 @@ while read TOKEN; do
 	[ -z "$TOKEN" ] || { PACKAGES+=( "$TOKEN" ); }
 done < <( echo "$PARAM_PACKAGES" | tr ";" "\n" )
 
+if [ "${#array[@]}" -gt "1"]; then
+
+	for PACKAGE in "${PACKAGES[@]}"; do
+		echo "Enqueueing package '$PACKAGE' ..."
+	done
+
+elif [ ! -z "${PACKAGES[0]}" ]
+
+	PACKAGE="${PACKAGES[0]}"
+	echo "Enqueueing package '$PACKAGE' ..."
+
+fi
+
 for PACKAGE in "${PACKAGES[@]}"; do
 	
 	mkdir -p "$DOWNLOAD_ROOT/$PACKAGE" && pushd "$DOWNLOAD_ROOT/$PACKAGE" > /dev/null
@@ -41,15 +54,21 @@ for PACKAGE in "${PACKAGES[@]}"; do
 
 	for URL in "${URLS[@]}"; do
 
-		echo -e "\nDownloading file $URL into $PWD ...\n"
+		echo -e "\n\nDownloading file $URL into $PWD ...\n"
 		
 		wget --user="$PARAM_SAPUSERNAME" --password="$PARAM_SAPPASSWORD" \
-			 --content-disposition --trust-server-names --auth-no-challenge -q --show-progress \
-			 --user-agent="SAP Download Manager" $URL
-
+			--content-disposition --trust-server-names --auth-no-challenge -q --show-progress \
+			--user-agent="SAP Download Manager" $URL
+		
 	done
+
+	if [ "${PACKAGE^^}" = "HOSTAGENT" ]; then
+
+		mv SAPCAR*.exe SAPCAR.exe
+		mv SAPHOSTAGENT*.SAR SAPHOSTAGENT.SAR
+
+	fi
 
 	popd > /dev/null
 
 done
-
