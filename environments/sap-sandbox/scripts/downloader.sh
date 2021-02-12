@@ -31,6 +31,8 @@ while read TOKEN; do
 	[ -z "$TOKEN" ] || { PACKAGES+=( "$TOKEN" ); }
 done < <( echo "$PARAM_PACKAGES" | tr ";" "\n" | tr "," "\n" )
 
+echo "Packages to process ${#array[@]}"
+
 if [ "${#array[@]}" -gt "1"]; then
 
 	for PACKAGE in "${PACKAGES[@]}"; do
