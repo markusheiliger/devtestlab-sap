@@ -48,7 +48,7 @@
       "name": "[variables('identityRole')]",
       "apiVersion": "2018-09-01-preview",
       "dependsOn": [
-        "[variables('identityName')]"
+        "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('identityName'))]"
       ],
       "properties": {
         "roleDefinitionId": "[variables('roleDefinition_reader')]",
@@ -61,8 +61,8 @@
       "name": "[variables('scriptName')]",
       "location": "[resourceGroup().location]",
       "dependsOn": [
-        "[variables('storageName')]",
-        "[variables('identityRole')]"
+        "[resourceId('Microsoft.Storage/storageAccounts', variables('storageName'))]",
+        "[resourceId('Microsoft.Authorization/roleAssignments', variables('identityRole'))]"
       ],
       "identity": {
         "type": "UserAssigned",
