@@ -31,12 +31,8 @@ while read TOKEN; do
 	[ -z "$TOKEN" ] || { PACKAGES+=( "$TOKEN" ); }
 done < <( echo "$PARAM_PACKAGES" | tr ";" "\n" | tr "," "\n" )
 
-echo "${#PACKAGES[@]} Packages to process"
-
 for PACKAGE in "${PACKAGES[@]}"; do
-
-	echo "Processing package '$PACKAGE' ..."
-
+	
 	mkdir -p "$DOWNLOAD_ROOT/$PACKAGE" && pushd "$DOWNLOAD_ROOT/$PACKAGE" > /dev/null
 
 	while read LINE; do
@@ -55,8 +51,8 @@ for PACKAGE in "${PACKAGES[@]}"; do
 
 	# if [ "${PACKAGE^^}" = "HOSTAGENT" ]; then
 
-	# 	# mv SAPCAR*.exe SAPCAR.exe
-	# 	# mv SAPHOSTAGENT*.SAR SAPHOSTAGENT.SAR
+	# 	mv SAPCAR*.exe SAPCAR.exe
+	# 	mv SAPHOSTAGENT*.SAR SAPHOSTAGENT.SAR
 
 	# fi
 
