@@ -37,7 +37,7 @@ if [ "${#array[@]}" -gt "1"]; then
 		echo "Enqueueing package '$PACKAGE' ..."
 	done
 
-elif [ ! -z "${PACKAGES[0]}" ]
+elif [ ! -z "${PACKAGES[0]}" ]; then
 
 	PACKAGE="${PACKAGES[0]}"
 	echo "Enqueueing package '$PACKAGE' ..."
