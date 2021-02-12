@@ -42,6 +42,9 @@ elif [ ! -z "${PACKAGES[0]}" ]; then
 	PACKAGE="${PACKAGES[0]}"
 	echo "Enqueueing package '$PACKAGE' ..."
 
+else
+
+	echo "How did we get here ???"
 fi
 
 for PACKAGE in "${PACKAGES[@]}"; do
