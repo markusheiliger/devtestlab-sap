@@ -43,8 +43,12 @@ for PACKAGE in "${PACKAGES[@]}"; do
 
 		echo -e "\n\nDownloading file $URL into $PWD ...\n"
 		
+		# wget --user="$PARAM_SAPUSERNAME" --password="$PARAM_SAPPASSWORD" \
+		# 	--content-disposition --trust-server-names --auth-no-challenge -q --show-progress \
+		# 	--user-agent="SAP Download Manager" $URL
+		
 		wget --user="$PARAM_SAPUSERNAME" --password="$PARAM_SAPPASSWORD" \
-			--content-disposition --trust-server-names --auth-no-challenge -q --show-progress \
+			--content-disposition --trust-server-names --auth-no-challenge \
 			--user-agent="SAP Download Manager" $URL
 		
 	done
