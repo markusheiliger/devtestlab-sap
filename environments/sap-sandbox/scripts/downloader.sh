@@ -17,12 +17,12 @@ fail () {
 }
 
 [ -z "$PARAM_SAPUSERNAME" ] && { PARAM_SAPUSERNAME="$SAPUsername"; } 
-[ -z "$PARAM_SAPUSERNAME" ] && fail "Parameter SAPUsername is mandatory"
+[ -z "$PARAM_SAPUSERNAME" ] && fail "Parameter --SAPUsername is mandatory"
 
 [ -z "$PARAM_SAPPASSWORD" ] && { PARAM_SAPPASSWORD="$SAPPassword"; } 
-[ -z "$PARAM_SAPPASSWORD" ] && fail "Parameter SAPPassword is mandatory"
+[ -z "$PARAM_SAPPASSWORD" ] && fail "Parameter --SAPPassword is mandatory"
 
-[ -z "$PARAM_PACKAGES" ] && fail "Parameter Packages is mandatory"
+[ -z "$PARAM_PACKAGES" ] && fail "Parameter --Packages is mandatory"
 
 readonly DOWNLOAD_ROOT="$DIR/downloads"
 rm -rf $DOWNLOAD_ROOT > /dev/null

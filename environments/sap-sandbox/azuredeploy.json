@@ -79,7 +79,7 @@
         "retentionInterval": "P1D",
         "cleanupPreference": "OnExpiration",
 
-        "arguments": "[concat('-Packages ', replace(replace(string(parameters('SAPPackages')), '[', ''), ']', ''))]",
+        "arguments": "[concat('--Packages ', replace(replace(string(parameters('SAPPackages')), '[', ''), ']', ''))]",
         "primaryScriptUri": "https://raw.githubusercontent.com/markusheiliger/devtestlab-sap/main/environments/sap-sandbox/scripts/downloader.sh",
 
         "storageAccountSettings": {
