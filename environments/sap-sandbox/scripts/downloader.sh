@@ -35,20 +35,16 @@ if [ "${#array[@]}" -gt "1"]; then
 
 	for PACKAGE in "${PACKAGES[@]}"; do
 		echo "Enqueueing package '$PACKAGE' ..."
+		./$0 --SAPUsername "$PARAM_SAPUSERNAME" --SAPPassword "$PARAM_SAPPASSWORD" --Packages "$PACKAGE" &
 	done
+
+	wait # wait for the started jobs
 
 elif [ ! -z "${PACKAGES[0]}" ]; then
 
 	PACKAGE="${PACKAGES[0]}"
-	echo "Enqueueing package '$PACKAGE' ..."
+	echo "Processing package '$PACKAGE' ..."
 
-else
-
-	echo "How did we get here ???"
-fi
-
-for PACKAGE in "${PACKAGES[@]}"; do
-	
 	mkdir -p "$DOWNLOAD_ROOT/$PACKAGE" && pushd "$DOWNLOAD_ROOT/$PACKAGE" > /dev/null
 
 	while read LINE; do
@@ -74,4 +70,7 @@ for PACKAGE in "${PACKAGES[@]}"; do
 
 	popd > /dev/null
 
-done
+else
+
+	echo "No package to process !!!"
+fi
