@@ -70,7 +70,7 @@ if [ ! -z "$StorageName" ] && [ ! -z "$StorageKey" ]; then
 	az storage blob upload-batch \
 		--account-name "$StorageName" --account-key "$StorageKey" \
 		--destination "$PARAM_PACKAGE" --source "$PWD" -o none \
-		--pattern "_downloader.*.log"
+		--pattern "_downloader.*.log" --no-progress
 	
 fi
 
