@@ -43,8 +43,6 @@ if [ "${PARAM_RESET^^}" == "TRUE" ]; then
     --name "$( uuidgen )" \
     --no-prompt true --mode Complete \
     --template-uri "https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/100-blank-template/azuredeploy.json" )
-  echo -e "\nDeallocating resources ..."
-  sleep 1m
 fi
 
 PACKAGES=()

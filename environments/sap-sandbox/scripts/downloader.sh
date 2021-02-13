@@ -50,20 +50,16 @@ for PACKAGE in "${PACKAGES[@]}"; do
 
 		echo -e "\nDownloading file $URL into $PWD ...\n"
 		
-		# wget --user="$PARAM_SAPUSERNAME" --password="$PARAM_SAPPASSWORD" \
-		# 	--content-disposition --trust-server-names --auth-no-challenge -q --show-progress \
-		# 	--user-agent="SAP Download Manager" $URL
-		
 		wget --user="$PARAM_SAPUSERNAME" --password="$PARAM_SAPPASSWORD" \
 			--content-disposition --trust-server-names --auth-no-challenge \
-			--user-agent="SAP Download Manager" "$URL"
+			--no-verbose --user-agent="SAP Download Manager" "$URL"
 		
 	done
 
 	if [ "${PACKAGE^^}" = "HOSTAGENT" ]; then
 
 		echo -e "\nRenaming hostagent packages ...\n"
-		mv SAPCAR*.exe SAPCAR.exe
+		mv SAPCAR*.EXE SAPCAR.EXE
 		mv SAPHOSTAGENT*.SAR SAPHOSTAGENT.SAR
 
 	fi
