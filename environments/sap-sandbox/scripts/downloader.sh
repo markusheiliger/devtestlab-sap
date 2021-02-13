@@ -32,7 +32,7 @@ readonly DOWNLOAD_ROOT="$DIR/../downloads"
 rm -rf $DOWNLOAD_ROOT && mkdir -p "$DOWNLOAD_ROOT"
 
 exec &> >(tee -a "$DOWNLOAD_ROOT/downloader.log")
-apt-get install -y wget
+sudo apt-get install -y wget
 
 for PACKAGE in "${PACKAGES[@]}"; do
 	
