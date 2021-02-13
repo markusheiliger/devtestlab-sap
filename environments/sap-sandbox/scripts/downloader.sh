@@ -24,12 +24,15 @@ fail () {
 
 [ -z "$PARAM_PACKAGES" ] && fail "Parameter --Packages is mandatory"
 
-readonly DOWNLOAD_ROOT="$DIR/../downloads"
-rm -rf $DOWNLOAD_ROOT > /dev/null
-
 while read TOKEN; do
 	[ -z "$TOKEN" ] || { PACKAGES+=( "$TOKEN" ); }
 done < <( echo "$PARAM_PACKAGES" | tr ";" "\n" | tr "," "\n" )
+
+readonly DOWNLOAD_ROOT="$DIR/../downloads"
+rm -rf $DOWNLOAD_ROOT && mkdir -p "$DOWNLOAD_ROOT"
+
+exec &> >(tee -a "$DOWNLOAD_ROOT/downloader.log")
+apt-get install -y wget
 
 for PACKAGE in "${PACKAGES[@]}"; do
 	
@@ -47,11 +50,9 @@ for PACKAGE in "${PACKAGES[@]}"; do
 		# 	--content-disposition --trust-server-names --auth-no-challenge -q --show-progress \
 		# 	--user-agent="SAP Download Manager" $URL
 		
-		wget -V > ./package.log
-		
 		wget --user="$PARAM_SAPUSERNAME" --password="$PARAM_SAPPASSWORD" \
 			--content-disposition --trust-server-names --auth-no-challenge \
-			--user-agent="SAP Download Manager" "$URL" | tee -a ./package.log
+			--user-agent="SAP Download Manager" "$URL"
 		
 	done
 
