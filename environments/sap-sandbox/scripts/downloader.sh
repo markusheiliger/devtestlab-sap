@@ -31,11 +31,12 @@ done < <( echo "$PARAM_PACKAGES" | tr ";" "\n" | tr "," "\n" )
 readonly DOWNLOAD_ROOT="$DIR/../downloads"
 rm -rf $DOWNLOAD_ROOT && mkdir -p "$DOWNLOAD_ROOT"
 
+# tee output to downloader log (our own littel log)
 exec &> >(tee -a "$DOWNLOAD_ROOT/downloader.log")
 
-apk update
-apk add wget
-wget --help
+# install a full featured wget
+echo -e "\nUpgrading wget ...\n"
+apk update && apk add wget
 
 for PACKAGE in "${PACKAGES[@]}"; do
 	
@@ -47,7 +48,7 @@ for PACKAGE in "${PACKAGES[@]}"; do
 
 	for URL in "${URLS[@]}"; do
 
-		echo -e "\n\nDownloading file $URL into $PWD ...\n"
+		echo -e "\nDownloading file $URL into $PWD ...\n"
 		
 		# wget --user="$PARAM_SAPUSERNAME" --password="$PARAM_SAPPASSWORD" \
 		# 	--content-disposition --trust-server-names --auth-no-challenge -q --show-progress \
@@ -59,12 +60,13 @@ for PACKAGE in "${PACKAGES[@]}"; do
 		
 	done
 
-	# if [ "${PACKAGE^^}" = "HOSTAGENT" ]; then
+	if [ "${PACKAGE^^}" = "HOSTAGENT" ]; then
 
-	# 	mv SAPCAR*.exe SAPCAR.exe
-	# 	mv SAPHOSTAGENT*.SAR SAPHOSTAGENT.SAR
+		echo -e "\nRenaming hostagent packages ...\n"
+		mv SAPCAR*.exe SAPCAR.exe
+		mv SAPHOSTAGENT*.SAR SAPHOSTAGENT.SAR
 
-	# fi
+	fi
 
 	popd > /dev/null
 
