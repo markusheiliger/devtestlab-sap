@@ -62,7 +62,7 @@ if [ ! -z "$StorageName" ] && [ ! -z "$StorageKey" ]; then
 	echo -e "\nUploading packages ...\n"
 	az storage blob upload-batch \
 		--account-name "$StorageName" --account-key "$StorageKey" \
-		--destination "$PARAM_PACKAGE" --source "$PWD" --no-progress -o none
+		--destination "$PARAM_PACKAGE" --source "$PWD" -o none
 
 fi
 
