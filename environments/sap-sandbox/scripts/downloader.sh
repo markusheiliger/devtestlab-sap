@@ -1,6 +1,26 @@
 #!/bin/bash
 
-DIR=$(dirname $0)
+set -e
+trap 'catch $? $LINENO' EXIT
+
+readonly DIR=$(dirname $0)
+readonly DOWNLOAD="$DIR/../download"
+
+# re-create download directory and initialize log
+rm -rf $DOWNLOAD && mkdir -p "$DOWNLOAD" && cd "$DOWNLOAD"
+exec &> >(tee -a "_downloader.$EPOCHSECONDS.log") 
+
+catch() {
+  if [ "$1" != "0" ]; then
+    # error handling goes here
+    echo "Error $1 occurred on $2"
+  fi
+}
+
+fail () {
+    echo >&2 "$@"
+    exit 1
+}
 
 while [ $# -gt 0 ]; do
   if [[ $1 == *"--"* ]]; then
@@ -11,22 +31,11 @@ while [ $# -gt 0 ]; do
   shift
 done
 
-fail () {
-    echo >&2 "$@"
-    exit 1
-}
-
 [ -z "$PARAM_SAPUSERNAME" ] && { PARAM_SAPUSERNAME="$SAPUsername"; } 
 [ -z "$PARAM_SAPUSERNAME" ] && fail "Parameter --SAPUsername is mandatory"
 [ -z "$PARAM_SAPPASSWORD" ] && { PARAM_SAPPASSWORD="$SAPPassword"; } 
 [ -z "$PARAM_SAPPASSWORD" ] && fail "Parameter --SAPPassword is mandatory"
 [ -z "$PARAM_PACKAGE" ] && fail "Parameter --Package is mandatory"
-
-readonly DOWNLOAD_ROOT="$DIR/../download" # re-create download root and switch context
-rm -rf $DOWNLOAD_ROOT && mkdir -p "$DOWNLOAD_ROOT" && pushd "$DOWNLOAD_ROOT" > /dev/null
-
-# tee output to downloader log 
-exec &> >(tee -a "_downloader.$EPOCHSECONDS.log")
 
 # install a full featured wget
 echo -e "\nUpgrading wget ...\n"
@@ -73,5 +82,3 @@ if [ ! -z "$StorageName" ] && [ ! -z "$StorageKey" ]; then
 		--pattern "_downloader.*.log" --no-progress
 	
 fi
-
-popd > /dev/null
