@@ -74,7 +74,7 @@ if [ ! -z "$StorageName" ] && [ ! -z "$StorageKey" ]; then
 
 	az storage blob upload-batch \
 		--account-name "$StorageName" --account-key "$StorageKey" -o none \
-		--destination "$PARAM_PACKAGE" --source "$PWD"--max-connections 20 
+		--destination "$PARAM_PACKAGE" --source "$PWD" --max-connections 20 
 
 	az storage blob upload-batch \
 		--account-name "$StorageName" --account-key "$StorageKey" \
