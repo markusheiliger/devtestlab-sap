@@ -64,6 +64,8 @@ for PACKAGE in "${PACKAGES[@]}"; do
 
 	fi
 
+	azcopy -h
+	
 	popd > /dev/null
 
 done
