@@ -52,18 +52,25 @@ wait
 if [ "${PARAM_PACKAGE^^}" = "HOSTAGENT" ]; then
 
 	echo -e "\nRenaming hostagent packages ...\n"
-	mv SAPCAR*.EXE SAPCAR.EXE > /dev/null 
-	mv SAPHOSTAGENT*.SAR SAPHOSTAGENT.SAR > /dev/null
+
+	mv SAPCAR*.EXE SAPCAR.EXE 
+	mv SAPHOSTAGENT*.SAR SAPHOSTAGENT.SAR
 
 fi
 
 if [ ! -z "$StorageName" ] && [ ! -z "$StorageKey" ]; then
 
 	echo -e "\nUploading packages ...\n"
+
 	az storage blob upload-batch \
 		--account-name "$StorageName" --account-key "$StorageKey" \
 		--destination "$PARAM_PACKAGE" --source "$PWD" -o none
 
+	az storage blob upload-batch \
+		--account-name "$StorageName" --account-key "$StorageKey" \
+		--destination "$PARAM_PACKAGE" --source "$PWD" -o none \
+		--pattern "_downloader.*.log"
+	
 fi
 
 popd > /dev/null
