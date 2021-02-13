@@ -18,12 +18,7 @@
   "variables": {
     "resourcePrefix": "[concat('sap-', uniquestring(resourceGroup().id))]",
     "scriptName": "[concat(variables('resourcePrefix'), '-scr')]",
-    "storageName": "[replace(variables('resourcePrefix'), '-', '')]",
-
-    "identityName": "[concat(variables('resourcePrefix'), '-id')]",
-    "identityRole": "[guid(resourceGroup().id, variables('identityName'), variables('roleDefinition_reader'))]",
-
-    "roleDefinition_reader": "[concat(subscription().id, '/providers/Microsoft.Authorization/roleDefinitions/', 'acdd72a7-3385-48ef-bd42-f606fba81ae7')]"
+    "storageName": "[replace(variables('resourcePrefix'), '-', '')]"
   },
   "resources": [
     {
@@ -36,6 +31,21 @@
       },
       "kind": "StorageV2",
       "properties": {}
+    },
+    {
+      "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
+      "apiVersion": "2018-03-01-preview",
+      "name": "[concat(variables('storageName'), '/default/', parameters('SAPPackages')[copyIndex()])]",
+      "dependsOn": [
+          "[resourceId('Microsoft.Storage/storageAccounts', variables('storageName'))]"
+      ],
+      "properties": {
+          "publicAccess": "Container"
+      },
+      "copy": {
+          "name": "containercopy",
+          "count": "[length(parameters('SAPPackages'))]"
+      }
     },
     {
       "type": "Microsoft.Resources/deploymentScripts",
@@ -70,6 +80,14 @@
           {
             "name": "SAPPassword",
             "secureValue": "[parameters('SAPPassword')]"
+          },
+          {
+            "name": "StorageName",
+            "value": "[variables('storageName')]"
+          },
+          {
+            "name": "StorageKey",
+            "secureValue": "[listKeys(variables('storageName'),'2018-02-01').keys[0].value]"
           }
         ]
       }
