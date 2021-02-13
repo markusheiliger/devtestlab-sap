@@ -42,9 +42,12 @@ for URL in "${URLS[@]}"; do
 	
 	wget --user="$PARAM_SAPUSERNAME" --password="$PARAM_SAPPASSWORD" \
 		--content-disposition --trust-server-names --auth-no-challenge \
-		--no-verbose --user-agent="SAP Download Manager" "$URL"
+		--no-verbose --user-agent="SAP Download Manager" "$URL" &
 	
 done
+
+echo -e "\nWaiting for downloads to finish ...\n"
+wait
 
 if [ "${PARAM_PACKAGE^^}" = "HOSTAGENT" ]; then
 
