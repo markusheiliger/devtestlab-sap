@@ -69,7 +69,7 @@
 
         "timeout": "PT30M",
         "retentionInterval": "P1D",
-        "cleanupPreference": "Always",
+        "cleanupPreference": "OnSuccess",
 
         "arguments": "[concat('--Package ', parameters('SAPPackages')[copyIndex()])]",
         "primaryScriptUri": "https://raw.githubusercontent.com/markusheiliger/devtestlab-sap/main/environments/sap-sandbox/scripts/downloader.sh",
