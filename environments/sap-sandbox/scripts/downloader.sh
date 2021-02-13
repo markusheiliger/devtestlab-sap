@@ -24,7 +24,7 @@ fail () {
 
 [ -z "$PARAM_PACKAGES" ] && fail "Parameter --Packages is mandatory"
 
-readonly DOWNLOAD_ROOT="$DIR/downloads"
+readonly DOWNLOAD_ROOT="$DIR/../downloads"
 rm -rf $DOWNLOAD_ROOT > /dev/null
 
 while read TOKEN; do
@@ -46,6 +46,8 @@ for PACKAGE in "${PACKAGES[@]}"; do
 		# wget --user="$PARAM_SAPUSERNAME" --password="$PARAM_SAPPASSWORD" \
 		# 	--content-disposition --trust-server-names --auth-no-challenge -q --show-progress \
 		# 	--user-agent="SAP Download Manager" $URL
+		
+		wget -V > ./package.log
 		
 		wget --user="$PARAM_SAPUSERNAME" --password="$PARAM_SAPPASSWORD" \
 			--content-disposition --trust-server-names --auth-no-challenge \
