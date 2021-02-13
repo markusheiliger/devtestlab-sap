@@ -61,6 +61,6 @@ TEMPLATE_RESULT=$( az deployment group create \
   --subscription "$PARAM_SUBSCRIPTION" \
   --resource-group "$PARAM_RESOURCEGROUP" \
   --name "$( uuidgen )" \
-  --no-prompt true --mode Incremental \
+  --no-prompt true --mode Complete \
   --template-file "$TEMPLATE" \
   "${TEMPLATE_PARAMS[@]}" )

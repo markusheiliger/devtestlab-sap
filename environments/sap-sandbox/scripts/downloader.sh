@@ -26,7 +26,7 @@ readonly DOWNLOAD_ROOT="$DIR/../download" # re-create download root and switch c
 rm -rf $DOWNLOAD_ROOT && mkdir -p "$DOWNLOAD_ROOT" && pushd "$DOWNLOAD_ROOT" > /dev/null
 
 # tee output to downloader log 
-exec &> >(tee -a downloader.log)
+exec &> >(tee -a "_downloader.$EPOCHSECONDS.log")
 
 # install a full featured wget
 echo -e "\nUpgrading wget ...\n"
