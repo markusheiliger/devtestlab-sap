@@ -11,7 +11,12 @@
     "SAPPackages": {
       "type": "array",
       "defaultValue": [
-        "hostagent"
+        "hostagent",
+        "hana",
+        "s4hana-1909",
+        "s4hana-2020",
+        "bw4hana-20",
+        "nw75-hdb"
       ]
     }
   },
@@ -33,6 +38,7 @@
       "properties": {}
     },
     {
+      "condition" : "[not(empty(parameters('SAPPackages')))]",
       "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
       "apiVersion": "2018-03-01-preview",
       "name": "[concat(variables('storageName'), '/default/', parameters('SAPPackages')[copyIndex()])]",
@@ -48,9 +54,10 @@
       }
     },
     {
+      "condition" : "[not(empty(parameters('SAPPackages')))]",
       "type": "Microsoft.Resources/deploymentScripts",
       "apiVersion": "2020-10-01",
-      "name": "[variables('scriptName')]",
+      "name": "[concat(variables('scriptName'), '-', parameters('SAPPackages')[copyIndex()])]",
       "location": "[resourceGroup().location]",
       "dependsOn": [
         "[resourceId('Microsoft.Storage/storageAccounts', variables('storageName'))]"
@@ -64,7 +71,7 @@
         "retentionInterval": "P1D",
         "cleanupPreference": "OnExpiration",
 
-        "arguments": "[concat('--Packages ', replace(replace(string(parameters('SAPPackages')), '[', ''), ']', ''))]",
+        "arguments": "[concat('--Packages ', parameters('SAPPackages')[copyIndex()])]",
         "primaryScriptUri": "https://raw.githubusercontent.com/markusheiliger/devtestlab-sap/main/environments/sap-sandbox/scripts/downloader.sh",
 
         "storageAccountSettings": {
@@ -90,6 +97,10 @@
             "secureValue": "[listKeys(variables('storageName'),'2018-02-01').keys[0].value]"
           }
         ]
+      },
+      "copy": {
+          "name": "packagecopy",
+          "count": "[length(parameters('SAPPackages'))]"
       }
     }
   ],

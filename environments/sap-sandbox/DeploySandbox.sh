@@ -45,14 +45,16 @@ if [ "${PARAM_RESET^^}" == "TRUE" ]; then
     --template-uri "https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/100-blank-template/azuredeploy.json" )
 fi
 
-PACKAGES=()
 while read TOKEN; do
 	[ -z "$TOKEN" ] || { PACKAGES+=( "$TOKEN" ); }
-done < <( echo "$PARAM_SAPPACKAGES" | tr ";" "\n" )
+done < <( echo "$PARAM_SAPPACKAGES" | tr "," "\n" | tr ";" "\n" )
+
+if [ "${#PACKAGES[@]}" -gt "0" ]; then
+  TEMPLATE_PARAMS+=( --parameters SAPPackages="$( ( IFS=$'\n'; echo "${PACKAGES[*]}" ) | jq -R . | jq -sc . )" )
+fi
 
 TEMPLATE_PARAMS+=( --parameters SAPUsername="$PARAM_SAPUSERNAME" )
 TEMPLATE_PARAMS+=( --parameters SAPPassword="$PARAM_SAPPASSWORD" )
-TEMPLATE_PARAMS+=( --parameters SAPPackages="$( ( IFS=$'\n'; echo "${PACKAGES[*]}" ) | jq -R . | jq -sc . )" )
 
 echo -e "\nDeploying resources ..."
 TEMPLATE_RESULT=$( az deployment group create \
