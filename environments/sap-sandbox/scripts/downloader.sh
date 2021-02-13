@@ -59,13 +59,18 @@ for PACKAGE in "${PACKAGES[@]}"; do
 	if [ "${PACKAGE^^}" = "HOSTAGENT" ]; then
 
 		echo -e "\nRenaming hostagent packages ...\n"
-		mv SAPCAR*.EXE SAPCAR.EXE
-		mv SAPHOSTAGENT*.SAR SAPHOSTAGENT.SAR
+		mv SAPCAR*.EXE SAPCAR.EXE > /dev/null 
+		mv SAPHOSTAGENT*.SAR SAPHOSTAGENT.SAR > /dev/null
 
 	fi
 
-	azcopy -h
-	
+	if [ ! -z "$StorageName" ] && [ ! -z "$StorageKey" ]; then
+
+		echo -e "\nUploading packages ...\n"
+		az storage blob upload-batch --account-name "$StorageName" --account-key "$StorageKey" -d "$PACKAGE" -s "$PWD"
+
+	fi
+
 	popd > /dev/null
 
 done
