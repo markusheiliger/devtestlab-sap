@@ -36,9 +36,11 @@ while read LINE; do
 	[[ "$LINE" = "https://softwaredownloads.sap.com/file/"* ]] && { URLS+=( "$LINE" ); }
 done < <( curl -s "https://raw.githubusercontent.com/lnwsoft/phoenix-repo-downloader/main/packages/$PARAM_PACKAGE.lst" )
 
+echo -e "\nEnqueueing downloads ...\n"
+
 for URL in "${URLS[@]}"; do
 
-	echo -e "\nDownloading file $URL into $PWD ...\n"
+	echo "Downloading $URL ==> $PWD"
 	
 	wget --user="$PARAM_SAPUSERNAME" --password="$PARAM_SAPPASSWORD" \
 		--content-disposition --trust-server-names --auth-no-challenge \
@@ -46,8 +48,7 @@ for URL in "${URLS[@]}"; do
 	
 done
 
-echo -e "\nWaiting for downloads to finish ...\n"
-wait
+echo -e "\nWaiting for downloads to finish ...\n" && wait
 
 if [ "${PARAM_PACKAGE^^}" = "HOSTAGENT" ]; then
 
