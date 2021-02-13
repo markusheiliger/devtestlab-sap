@@ -32,7 +32,10 @@ readonly DOWNLOAD_ROOT="$DIR/../downloads"
 rm -rf $DOWNLOAD_ROOT && mkdir -p "$DOWNLOAD_ROOT"
 
 exec &> >(tee -a "$DOWNLOAD_ROOT/downloader.log")
-sudo apt-get install -y wget
+
+apk update
+apk add wget
+wget --help
 
 for PACKAGE in "${PACKAGES[@]}"; do
 	
