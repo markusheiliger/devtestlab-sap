@@ -22,7 +22,7 @@
   },
   "variables": {
     "resourcePrefix": "[concat('sap-', uniquestring(resourceGroup().id))]",
-    "scriptName": "[concat(variables('resourcePrefix'), '-scr')]",
+    "scriptName": "[concat(variables('resourcePrefix'), '-dl')]",
     "storageName": "[replace(variables('resourcePrefix'), '-', '')]"
   },
   "resources": [
